@@ -1,0 +1,15 @@
+{
+  "query": {
+    "resource": "Patient",
+    "parameters": [
+      {
+        "variable": "birthdate",
+        "condition": "gt1990"
+      }
+    ]
+  },
+  "data": {
+    "output_format": "raw",
+    "filename": "query_results.json"
+  }
+}
