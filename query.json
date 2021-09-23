@@ -4,7 +4,11 @@
     "parameters": [
       {
         "variable": "birthdate",
-        "condition": "gt1990"
+        "condition": "gt1960"
+      },
+      {
+        "variable": "gender",
+        "condition": "female"
       }
     ]
   },

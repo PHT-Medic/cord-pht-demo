@@ -46,6 +46,7 @@ different resources, adapt the `parse_resources()` function.
 ### PyCharm IDE docker execution
 You can simply specify the Interpreter in PyCharm based on the docker image. Therefore, add the interpreter with a public available
 master image (e.g. ``harbor-pht.tada5hi.net/master/python/slim:latest``). If you run the train such, set the variable `DOCKER_IDE=True`.
+Please specify as container settings `-v <local_path>/station-data:/opt/pht_results` to the run parameters.
 
 ### Execution as dockerfile
 If you want to execute the train as a docker container, please build your train testing the code:
