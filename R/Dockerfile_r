@@ -1,0 +1,3 @@
+FROM harbor-pht.tada5hi.net/master/r/cord:latest
+COPY ["script.R", "/opt/pht_train/"]
+CMD ["Rscript","/opt/pht_train/script.R"]
