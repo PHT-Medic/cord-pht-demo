@@ -11,7 +11,24 @@ options(warn=-1)# warnung ausblenden
 #Input von andere Team _Condition_code=E84.0,E84.1,E84.80,E84.87,E84.88,E84.9,O80_2021-03-03_15-25-58
 #data <- read.csv("r/projectathon/filename.csv")
 ###############################################################################################################
-data <- read.csv("/opt/pht_data/A2-1.csv")# aus projektbereich ordner
+data_folder <- "./opt/pht_data/"
+result_folder <- "./opt/pht_results/"
+print(paste(data_folder, "A2-1.csv", sep = ""))
+
+data <- read.csv(paste(data_folder ,"A2-1.csv", sep = ""))# aus projektbereich ordner
+
+#wenn im PHT zuvor daten erstellt wurde -> auslesen
+if (file.exists(paste(result_folder,"result.csv", sep = ""))) {
+  
+  data_pht <- read.csv(paste(result_folder,"result.csv", sep = ""))#("pht/results.csv")
+  
+  data <- rbind(data, data_pht)
+  message("previous PHT result found -> Add up")
+} else {
+  
+  message("No previous PHT result found -> Assume first")
+}
+
 
 # Eleminiere doppelte Patienten
 data <- data %>% distinct(PatientIdentifikator, AngabeDiag1, .keep_all = TRUE)
@@ -34,7 +51,7 @@ result$TextDiagnose1 <- NULL
 result$TextDiagnose2 <- NULL
 result$AngabeDiag2 <- NULL
 
-write.csv(result, "/opt/pht_data/result.csv")
+write.csv(result, "/opt/pht_result/result.csv")
 
 ################## Um der Alterspyramid zu rechnen######################################################################
 # Nehmen wir Geschlechht, Alter, Anzahl
@@ -48,6 +65,9 @@ stratified_wide <- rbind(stratified_female,stratified_male)
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "f"] <- "female"
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "m"] <- "male"
 
+#FÜR PHT DAS GANZE RAUSSCHREIBEN
+write.csv(stratified_wide, "/opt/pht_results/result_table.csv")
+
 #Labellen name als angabe
 names(stratified_wide)[names(stratified_wide)== "AngabeAlter"] <- "ageG"
 names(stratified_wide)[names(stratified_wide)== "Anzahl"] <- "Count"
@@ -56,5 +76,3 @@ names(stratified_wide)[names(stratified_wide)== "AngabeGeschlecht"] <- "gender"
 #Alterspyramid kozipieren
 g <- ggplot(stratified_wide,aes(x=Count,y=ageG,fill=gender))
 g + geom_bar(stat="identity")
-
-ggsave("/opt/pht_data/altersverteilung.pdf")
