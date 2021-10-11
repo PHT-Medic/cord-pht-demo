@@ -18,9 +18,9 @@ print(paste(data_folder, "A2-1.csv", sep = ""))
 data <- read.csv(paste(data_folder ,"A2-1.csv", sep = ""))# aus projektbereich ordner
 
 #wenn im PHT zuvor daten erstellt wurde -> auslesen
-if (file.exists(paste(result_folder,"result.csv", sep = ""))) {
+if (file.exists(paste(result_folder,"input.csv", sep = ""))) {
   
-  data_pht <- read.csv(paste(result_folder,"result.csv", sep = ""))#("pht/results.csv")
+  data_pht <- read.csv(paste(result_folder,"input.csv", sep = ""))#("pht/results.csv")
   
   data <- rbind(data, data_pht)
   message("previous PHT result found -> Add up")
@@ -51,7 +51,7 @@ result$TextDiagnose1 <- NULL
 result$TextDiagnose2 <- NULL
 result$AngabeDiag2 <- NULL
 
-write.csv(result, "/opt/pht_result/result.csv")
+write.csv(result, "/opt/pht_results/result2.csv")
 
 ################## Um der Alterspyramid zu rechnen######################################################################
 # Nehmen wir Geschlechht, Alter, Anzahl
