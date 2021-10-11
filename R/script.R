@@ -11,8 +11,8 @@ options(warn=-1)# warnung ausblenden
 #Input von andere Team _Condition_code=E84.0,E84.1,E84.80,E84.87,E84.88,E84.9,O80_2021-03-03_15-25-58
 #data <- read.csv("r/projectathon/filename.csv")
 ###############################################################################################################
-data_folder <- "./opt/pht_data/"
-result_folder <- "./opt/pht_results/"
+data_folder <- "/opt/pht_data/"
+result_folder <- "/opt/pht_results/"
 print(paste(data_folder, "A2-1.csv", sep = ""))
 
 data <- read.csv(paste(data_folder ,"A2-1.csv", sep = ""))# aus projektbereich ordner
@@ -51,7 +51,9 @@ result$TextDiagnose1 <- NULL
 result$TextDiagnose2 <- NULL
 result$AngabeDiag2 <- NULL
 
-write.csv(result, "/opt/pht_results/result2.csv")
+
+write.csv(result, "/opt/pht_results/result.csv")
+
 
 ################## Um der Alterspyramid zu rechnen######################################################################
 # Nehmen wir Geschlechht, Alter, Anzahl
@@ -65,7 +67,7 @@ stratified_wide <- rbind(stratified_female,stratified_male)
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "f"] <- "female"
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "m"] <- "male"
 
-#FÜR PHT DAS GANZE RAUSSCHREIBEN
+#Fï¿½R PHT DAS GANZE RAUSSCHREIBEN
 write.csv(stratified_wide, "/opt/pht_results/result_table.csv")
 
 #Labellen name als angabe
