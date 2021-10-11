@@ -52,7 +52,12 @@ result$TextDiagnose2 <- NULL
 result$AngabeDiag2 <- NULL
 
 
-write.csv(result, "/opt/pht_results/result.csv")
+#WRITE SOME Data for PHT
+data_pht_man = data %>% subset(AngabeGeschlecht=="m")
+data_pht_woman = data %>% subset(AngabeGeschlecht=="f")
+output_pht = c(length(data_pht_man$AngabeAlter), mean(data_pht_man$AngabeAlter), length(data_pht_woman$AngabeAlter), mean(data_pht_woman$AngabeAlter))
+print(output_pht)
+write.csv2(output_pht, "./opt/pht_results/result_mean.csv", row.names = FALSE)
 
 
 ################## Um der Alterspyramid zu rechnen######################################################################
