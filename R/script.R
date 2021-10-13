@@ -1,9 +1,13 @@
 ############################################################################################################################
-##         Zur Alterspyramid zu rechnen
+##         Zur Alterspyramide zu rechnen
 ##############################################################################################################################
 library(tidyverse)
 library(eeptools) # um Alter zu berechnen
 library(ggplot2)# für muster age pyramid
+
+# empty global enviroment
+rm(list = ls())
+
 options(warn=-1)# warnung ausblenden
 #############################################################################################################
 # Fügen Sie die Eingabedaten zu Ihrem aktuellen Arbeitsverzeichnis hinzu und geben Sie den Pfad an
@@ -30,24 +34,48 @@ data$AngabeGeburtsdatum <- NULL
 #WRITE Mean Data for PHT and add up if available ---------------------------
 data_pht_man = data %>% subset(AngabeGeschlecht=="m")
 data_pht_woman = data %>% subset(AngabeGeschlecht=="f")
-output_pht = c(length(data_pht_man$AngabeAlter), as.double(mean(data_pht_man$AngabeAlter)), length(data_pht_woman$AngabeAlter), as.double(mean(data_pht_woman$AngabeAlter)))
+
+output_pht_df <- data.frame(
+  sex = c("male", "female"),
+  number = c(length(data_pht_man$AngabeAlter), length(data_pht_woman$AngabeAlter)),
+  age_mean = c(mean(data_pht_man$AngabeAlter), mean(data_pht_woman$AngabeAlter))
+)
 
 #Check if there are previous results -> if yes add up
 if (file.exists(paste(result_folder,"result_mean.csv", sep = ""))) {
   
-  previous_mean <- read.table(paste(result_folder,"result_mean.csv", sep = ""), 
-                              header = FALSE)
-  i<-0
-  for (i in 1:4){ 
-    output_pht[i] <- output_pht[i] + as.double(previous_mean$V1[i+1])
-    print(previous_mean$V1[i+1])
-  }
-  print(output_pht)
-  #data <- rbind(stratified_wide, data_pht)
+  previous_mean_df <- read.csv2(paste0(result_folder,"result_mean.csv"))
+  
+  output_both <- previous_mean_df %>% 
+    # combine both datasets - add second dataframe in rows
+    bind_rows(
+      output_pht_df
+    ) %>% 
+    # rename column "number" to preserve for calculation
+    dplyr::rename( 
+      number_old = number
+    ) %>% 
+    # apply following operaitions on grouped varaible sex
+    group_by(sex) %>% 
+    # summarize table: compute mean and number
+    dplyr::summarize(
+      # sum up all numbers of patients
+      number = sum(number_old),
+      # compute new mean
+      age_mean = sum(age_mean * number_old)/number
+    )
+ 
+  # overwrite vairable for storing
+  output_pht_df <- output_both
+
   message("previous PHT result found -> Add up")
 }
-print(output_pht)
-write.csv(output_pht, "./opt/pht_results/result_mean.csv", row.names = FALSE)
+
+# print results for fun
+print(output_pht_df)
+
+# write results (combined or not) to csv
+write.csv2(output_pht_df, "./opt/pht_results/result_mean.csv", row.names = FALSE)
 #----------------------------------------------------------------------------
 
 
@@ -78,20 +106,20 @@ stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "f"] <- "f
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "m"] <- "male"
 
 
-#wenn im PHT zuvor daten erstellt wurde -> auslesen
-if (file.exists(paste(result_folder,"result_table.csv", sep = ""))) {
-  
-  data_pht <- read.csv(paste(result_folder,"result_table.csv", sep = ""))#("pht/results.csv")
-  
-  data <- rbind(stratified_wide, data_pht)
-  message("previous PHT result found -> Add up")
-} else {
-  
-  message("No previous PHT result found -> Assume first")
-}
-
-#FUER PHT DAS GANZE RAUSSCHREIBEN - inklusive neuen Daten
-write.csv(stratified_wide, "./opt/pht_results/result_table.csv")
+# #wenn im PHT zuvor daten erstellt wurde -> auslesen
+# if (file.exists(paste(result_folder,"result_table.csv", sep = ""))) {
+#   
+#   data_pht <- read.csv(paste(result_folder,"result_table.csv", sep = ""))#("pht/results.csv")
+#   
+#   data <- rbind(stratified_wide, data_pht)
+#   message("previous PHT result found -> Add up")
+# } else {
+#   
+#   message("No previous PHT result found -> Assume first")
+# }
+# 
+# #FUER PHT DAS GANZE RAUSSCHREIBEN - inklusive neuen Daten
+# write.csv(stratified_wide, "./opt/pht_results/result_table.csv")
 
 #Labellen name als angabe
 names(stratified_wide)[names(stratified_wide)== "AngabeAlter"] <- "ageG"
@@ -101,3 +129,4 @@ names(stratified_wide)[names(stratified_wide)== "AngabeGeschlecht"] <- "gender"
 #Alterspyramid kozipieren
 g <- ggplot(stratified_wide,aes(x=Count,y=ageG,fill=gender))
 g + geom_bar(stat="identity")
+
