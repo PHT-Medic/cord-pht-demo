@@ -17,11 +17,11 @@ def age_from_dob(dob):
 
 
 def parse_fhir_results():
+    print("Parsing the fhir search results")
     with open(DATA_PATH, "r") as input_file:
         fhir_response_dict = json.load(input_file)
 
     entries = fhir_response_dict.get("entry")
-
     birthdates = []
     # only extract the birthdate from the patient resources
     if entries:
@@ -31,24 +31,29 @@ def parse_fhir_results():
     patients_df["birthdate"] = birthdates
     patients_df["birthdate"] = pd.to_datetime(patients_df["birthdate"])
 
+    print("Finished")
     return patients_df
 
 
 def calculate_local_average():
+    print("Calculating local average")
     results = parse_fhir_results()
     ages = results["birthdate"].apply(age_from_dob)
     local_average = ages.mean()
+    print("Finished")
     return local_average
 
 
 def load_previous_data():
+    print("Attempting to load previous results")
     if os.path.exists(RESULTS_PATH):
+        print("Found previous results, loading...")
         with open(RESULTS_PATH, "r") as f:
             average_age_dict = json.load(f)
 
         return average_age_dict
-
     else:
+        print("No previous results found")
         return None
 
 
