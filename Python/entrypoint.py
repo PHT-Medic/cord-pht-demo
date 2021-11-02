@@ -20,7 +20,7 @@ if DOCKER_IDE:
 else:
     # for trains submitted via UI or build with dockerfile - docker_ide = False
     QUERY_FILE = "/opt/pht_train/cord_query.json"
-    FHIR_PATH = "/opt/train_data/cord_query_results.json"
+    FHIR_PATH = "/opt/train_data/cord_results.json"
     MODEL_PATH = '/opt/pht_results/model.pkl'
     RESULT_PATH = '/opt/pht_results/results.pkl'
 
