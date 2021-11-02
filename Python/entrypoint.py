@@ -15,12 +15,12 @@ if DOCKER_IDE:
     # local testing with docker as interpreter in IDE
     MODEL_PATH = 'model.pkl'
     RESULT_PATH = 'results.pkl'
-    QUERY_FILE = "query.json"
-    FHIR_PATH = "query_results.json"
+    QUERY_FILE = "cord_query.json"
+    FHIR_PATH = "cord_results.json"
 else:
     # for trains submitted via UI or build with dockerfile - docker_ide = False
-    QUERY_FILE = "/opt/pht_train/query.json"
-    FHIR_PATH = "/opt/train_data/query_results.json"
+    QUERY_FILE = "/opt/pht_train/cord_query.json"
+    FHIR_PATH = "/opt/train_data/cord_query_results.json"
     MODEL_PATH = '/opt/pht_results/model.pkl'
     RESULT_PATH = '/opt/pht_results/results.pkl'
 
@@ -139,5 +139,6 @@ def query():
 
 if __name__ == '__main__':
     load_dotenv(find_dotenv())
-    query()  # executed by stations - just for testing purpose
+    print(os.curdir)
+    #query()  # executed by stations - just for testing purpose
     main()
