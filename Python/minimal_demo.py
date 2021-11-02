@@ -1,5 +1,4 @@
 import os
-import asyncio
 import json
 import pandas as pd
 import pathlib
@@ -9,46 +8,12 @@ from train_lib.fhir import PHTFhirClient
 
 
 DATA_PATH = os.getenv("TRAIN_DATA_PATH")
-DOCKER_IDE_EXEC = False
 
-if DOCKER_IDE_EXEC:
-    # local testing with docker as interpreter in IDE
-    MODEL_PATH = 'model.pkl'
-    RESULT_PATH = 'results.pkl'
-    QUERY_FILE = "cord_query.json"
-    FHIR_PATH = "cord_results.json"
-else:
-    # for trains submitted via UI or build with dockerfile - docker_ide = False
-    QUERY_FILE = "/opt/pht_train/cord_query.json"
-    FHIR_PATH = "/opt/train_data/cord_results.json"
-    MODEL_PATH = '/opt/pht_results/model.pkl'
-    RESULT_PATH = '/opt/pht_results/results.pkl'
-
-
-def main():
-    """
-    Main analysis function of the train - the CORD minimal demo, requires only result files and no models
-    :return:
-    """
-    # parse the FHIR response and load previous results (if available)
-    pat_df = parse_fhir_response()
-    try:
-        results = load_if_exists(RESULT_PATH)
-    except FileNotFoundError:
-        print("No file available")
-    if results is None:
-        results = {'analysis': {}, 'discovery': {}}
-    print("Previous results: {}".format(results))
-
-    # Write analysis code here
-    # demo function to count occurence of variables
-    occ = occurence_data(pat_df, 'gender')
-
-    results['analysis']['analysis_exec_' + str(len(results['analysis']) + 1)] = occ
-
-    print("Updated results: {}".format(results))
-
-    save_results(results, RESULT_PATH)
+# for trains submitted via UI or build with dockerfile - docker_ide = False
+QUERY_FILE = "/opt/pht_train/cord_query.json"
+FHIR_PATH = "/opt/train_data/cord_results.json"
+MODEL_PATH = '/opt/pht_results/model.pkl'
+RESULT_PATH = '/opt/pht_results/results.pkl'
 
 
 def load_if_exists(model_path: str):
@@ -68,6 +33,12 @@ def load_if_exists(model_path: str):
 
 
 def save_results(results, result_path):
+    """
+    Create (if doesnt exist) a result directory and store the analysis results within
+    :param results: Result content
+    :param result_path:  Path of results file
+    :return: store results as pickle file
+    """
     dirPath = '/opt/pht_results'
     try:
         # Create target Directory
@@ -81,6 +52,10 @@ def save_results(results, result_path):
 
 
 def parse_fhir_response() -> pd.DataFrame:
+    """
+    Load and parse provided FHIR resources to a pandas dataframe
+    :return:
+    """
     with open(FHIR_PATH, "r") as f:
         results = json.load(f)
     parsed_resources = []
@@ -97,9 +72,9 @@ def parse_resource(resource):
     Parse a FHIR resource returned from a FHIR server in a desired format
 
     :param resource:
-    :return:
+    :return: dictionary of parsed resource
     """
-    # TODO specify required resources here
+    # TODO change here to specify required resources
     sequence_dict = {
         "givenName": resource['name'][0]['given'],
         "familyName": resource['name'][0]['family'],
@@ -119,26 +94,32 @@ def occurence_data(pat_df, column):
 
     return pat_df[column].value_counts()
 
-
-def query():
-    print("FHIR Client PHT Credentials")
-    print(os.getenv("FHIR_SERVER_URL"))
-    print(os.getenv("FHIR_TOKEN"))
-    print(os.getenv("FHIR_USER"))
-    print(os.getenv("FHIR_PW"))
-    client = PHTFhirClient(server_url=os.getenv("FHIR_SERVER_URL"), token=os.getenv("FHIR_TOKEN"))
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(client.execute_query(QUERY_FILE))
-    try:
-        with open(FHIR_PATH, "w") as f:
-            json.dump(result, f)
-        print("FHIR data stored as json")
-    except:
-        print("Data not stored")
+# TODO extend with own custom functions here
 
 
 if __name__ == '__main__':
+    """
+    Main analysis function of the train - the CORD minimal demo, requires only result files and no models
+    :return:
+    """
     load_dotenv(find_dotenv())
-    print(os.curdir)
-    #query()  # executed by stations - just for testing purpose
-    main()
+    # parse the FHIR response and load previous results (if available)
+    pat_df = parse_fhir_response()
+    # Try to load previous results, if no exist create dictionary and print results before execution of analysis
+    try:
+        results = load_if_exists(RESULT_PATH)
+    except FileNotFoundError:
+        print("No file available")
+    if results is None:
+        results = {'analysis': {}, 'discovery': {}}
+    print("Previous results: {}".format(results))
+
+    # Write analysis code here
+    # demo function to count occurence of specified variables
+    occ = occurence_data(pat_df, 'gender')
+
+    results['analysis']['analysis_exec_' + str(len(results['analysis']) + 1)] = occ
+
+    # print updated results
+    print("Updated results: {}".format(results))
+    save_results(results, RESULT_PATH)

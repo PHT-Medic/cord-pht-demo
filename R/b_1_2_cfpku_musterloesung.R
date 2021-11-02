@@ -49,8 +49,11 @@ design <- list(
   ) 
 )
 
-# download fhir bundles
-bundles <- fhir_search(request = search_request, max_bundles = 50,verbose =2,log_errors = 2)
+# download fhir bundles TODO will not work
+# bundles <- fhir_search(request = search_request, max_bundles = 50,verbose =2,log_errors = 2)
+
+# process json fhir bundles
+bundles <- # TODO load "cord_results.xml"
 
 # crack fhir bundles
 dfs <- fhir_crack(bundles, design)
