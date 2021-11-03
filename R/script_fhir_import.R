@@ -31,41 +31,27 @@ design <- list(
 dfs <- fhir_crack(loaded_bundles, design)
 
 # save raw patients dataframe
-patients_raw <- dfs$Patients
+data <- dfs$Patients
 
-
-
-#############################################################################################################
-# Fügen Sie die Eingabedaten zu Ihrem aktuellen Arbeitsverzeichnis hinzu und geben Sie den Pfad an
-###########################################################################################################################################
-#Input von andere Team _Condition_code=E84.0,E84.1,E84.80,E84.87,E84.88,E84.9,O80_2021-03-03_15-25-58
-#data <- read.csv("r/projectathon/filename.csv")
-###############################################################################################################
+##Data folders#############################################################################################################
 data_folder <- "./opt/pht_data/"
 result_folder <- "./opt/pht_results/"
-print(paste(data_folder, "A2-1.csv", sep = ""))
-
-data <- read.csv(paste(data_folder ,"A2-1.csv", sep = ""))# aus projektbereich ordner
-
-
-# Eleminiere doppelte Patienten
-data <- data %>% distinct(PatientIdentifikator, AngabeDiag1, .keep_all = TRUE)
-data$PatientIdentifikator <- NULL
 
 # Berechne Alter auf der grund von Geburtsdatum
-data$AngabeAlter <- floor(age_calc(as.Date(data$AngabeGeburtsdatum), unit="years"))
-data$AngabeGeburtsdatum <- NULL
-
+data$AngabeAlter <- floor(age_calc(as.Date(data$birthdate), unit="years"))
 
 #WRITE Mean Data for PHT and add up if available ---------------------------
-data_pht_man = data %>% subset(AngabeGeschlecht=="m")
-data_pht_woman = data %>% subset(AngabeGeschlecht=="f")
+data_pht_man = data %>% subset(gender=="male")
+data_pht_woman = data %>% subset(gender=="female")
 
 output_pht_df <- data.frame(
   sex = c("male", "female"),
   number = c(length(data_pht_man$AngabeAlter), length(data_pht_woman$AngabeAlter)),
   age_mean = c(mean(data_pht_man$AngabeAlter), mean(data_pht_woman$AngabeAlter))
 )
+
+#if There is a count of 0 -> replace NaN with 0 for correct addition
+output_pht_df[is.na(output_pht_df)]<-0
 
 #Check if there are previous results -> if yes add up
 if (file.exists(paste(result_folder,"result_mean.csv", sep = ""))) {
@@ -81,7 +67,7 @@ if (file.exists(paste(result_folder,"result_mean.csv", sep = ""))) {
     dplyr::rename( 
       number_old = number
     ) %>% 
-    # apply following operaitions on grouped varaible sex
+    # apply following operations on grouped variable sex
     group_by(sex) %>% 
     # summarize table: compute mean and number
     dplyr::summarize(
@@ -91,7 +77,7 @@ if (file.exists(paste(result_folder,"result_mean.csv", sep = ""))) {
       age_mean = sum(age_mean * number_old)/number
     )
  
-  # overwrite vairable for storing
+  # overwrite variable for storing
   output_pht_df <- output_both
 
   message("previous PHT result found -> Add up")
@@ -110,47 +96,22 @@ data$AngabeAlter <- cut(data$AngabeAlter, breaks = c(0, 10, 20, 30, 40, 50, 60, 
 
 # Gruppiere
 result  <- as.data.frame(data %>%
-                           group_by(Einrichtungsidentifikator, AngabeDiag1, AngabeGeschlecht, AngabeAlter) %>%
+                           group_by(  AngabeAlter, gender) %>%
                            summarise(Anzahl = n()))
-
-# Entferne nicht benoetigte Spalten
-result$TextDiagnose1 <- NULL
-result$TextDiagnose2 <- NULL
-result$AngabeDiag2 <- NULL
 
 
 ################## Um der Alterspyramid zu rechnen######################################################################
 # Nehmen wir Geschlechht, Alter, Anzahl
 ############################################################################################################################
-stratified <- result[,c('AngabeGeschlecht','AngabeAlter','Anzahl')]
-stratified_female <- (data = stratified %>% subset(AngabeGeschlecht=="f"))
-stratified_male <- (data = stratified %>% subset(AngabeGeschlecht=="m")) %>% transform(Anzahl = (data = stratified %>% subset(AngabeGeschlecht=="m"))$Anzahl * -1 )
+stratified <- result[,c('gender','AngabeAlter','Anzahl')]
+stratified_female <- (data = stratified %>% subset(gender=="female"))
+stratified_male <- (data = stratified %>% subset(gender=="male")) %>% transform(Anzahl = (data = stratified %>% subset(gender=="male"))$Anzahl * -1 )
 stratified_wide <- rbind(stratified_female,stratified_male)
-
-#Abkuerzung ändern statt "f", "female" und statt "m" "male" verwenden
-stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "f"] <- "female"
-stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "m"] <- "male"
-
-
-# #wenn im PHT zuvor daten erstellt wurde -> auslesen
-# if (file.exists(paste(result_folder,"result_table.csv", sep = ""))) {
-#   
-#   data_pht <- read.csv(paste(result_folder,"result_table.csv", sep = ""))#("pht/results.csv")
-#   
-#   data <- rbind(stratified_wide, data_pht)
-#   message("previous PHT result found -> Add up")
-# } else {
-#   
-#   message("No previous PHT result found -> Assume first")
-# }
-# 
-# #FUER PHT DAS GANZE RAUSSCHREIBEN - inklusive neuen Daten
-# write.csv(stratified_wide, "./opt/pht_results/result_table.csv")
 
 #Labellen name als angabe
 names(stratified_wide)[names(stratified_wide)== "AngabeAlter"] <- "ageG"
 names(stratified_wide)[names(stratified_wide)== "Anzahl"] <- "Count"
-names(stratified_wide)[names(stratified_wide)== "AngabeGeschlecht"] <- "gender"
+names(stratified_wide)[names(stratified_wide)== "gender"] <- "gender"
 
 #Alterspyramid kozipieren
 g <- ggplot(stratified_wide,aes(x=Count,y=ageG,fill=gender))
