@@ -3,16 +3,17 @@
 ##############################################################################################################################
 library(tidyverse)
 library(eeptools) # um Alter zu berechnen
-library(ggplot2)# für muster age pyramid
+library(ggplot2)# fC<r muster age pyramid
 library(fhircrackr)
 
 # empty global enviroment
 rm(list = ls())
 
-options(warn=-1)# warnung ausblenden
+# ignore warnings
+options(warn=-1)
 
-#LOAD Data from importet FHIR
-loaded_bundles <- fhir_load("/opt/train_data/")
+# load Data from imported FHIR
+loaded_bundles <- fhir_load("./opt/train_data/")
 design <- list(
   Patients = list(
     resource = "//Patient",
@@ -116,3 +117,4 @@ names(stratified_wide)[names(stratified_wide)== "gender"] <- "gender"
 g <- ggplot(stratified_wide,aes(x=Count,y=ageG,fill=gender))
 g + geom_bar(stat="identity")
 
+ggsave("./opt/pht_results/result_graph.png")
