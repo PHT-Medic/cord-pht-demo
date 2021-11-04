@@ -12,7 +12,7 @@ rm(list = ls())
 options(warn=-1)# warnung ausblenden
 
 #LOAD Data from importet FHIR
-loaded_bundles <- fhir_load("./fhir/")
+loaded_bundles <- fhir_load("/opt/train_data/")
 design <- list(
   Patients = list(
     resource = "//Patient",
@@ -34,7 +34,6 @@ dfs <- fhir_crack(loaded_bundles, design)
 data <- dfs$Patients
 
 ##Data folders#############################################################################################################
-data_folder <- "./opt/pht_data/"
 result_folder <- "./opt/pht_results/"
 
 # Berechne Alter auf der grund von Geburtsdatum
