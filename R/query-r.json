@@ -1,0 +1,9 @@
+{
+  "query": {
+    "resource": "Patient"
+  },
+  "data": {
+    "output_format": "xml",
+    "filename": "patients.xml"
+  }
+}
