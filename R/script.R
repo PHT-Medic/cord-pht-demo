@@ -3,14 +3,14 @@
 ##############################################################################################################################
 library(tidyverse)
 library(eeptools) # um Alter zu berechnen
-library(ggplot2)# fÃ¼r muster age pyramid
+library(ggplot2)# für muster age pyramid
 
 # empty global enviroment
 rm(list = ls())
 
 options(warn=-1)# warnung ausblenden
 #############################################################################################################
-# FÃ¼gen Sie die Eingabedaten zu Ihrem aktuellen Arbeitsverzeichnis hinzu und geben Sie den Pfad an
+# Fügen Sie die Eingabedaten zu Ihrem aktuellen Arbeitsverzeichnis hinzu und geben Sie den Pfad an
 ###########################################################################################################################################
 #Input von andere Team _Condition_code=E84.0,E84.1,E84.80,E84.87,E84.88,E84.9,O80_2021-03-03_15-25-58
 #data <- read.csv("r/projectathon/filename.csv")
@@ -64,10 +64,10 @@ if (file.exists(paste(result_folder,"result_mean.csv", sep = ""))) {
       # compute new mean
       age_mean = sum(age_mean * number_old)/number
     )
- 
+  
   # overwrite vairable for storing
   output_pht_df <- output_both
-
+  
   message("previous PHT result found -> Add up")
 }
 
@@ -101,7 +101,7 @@ stratified_female <- (data = stratified %>% subset(AngabeGeschlecht=="f"))
 stratified_male <- (data = stratified %>% subset(AngabeGeschlecht=="m")) %>% transform(Anzahl = (data = stratified %>% subset(AngabeGeschlecht=="m"))$Anzahl * -1 )
 stratified_wide <- rbind(stratified_female,stratified_male)
 
-#Abkuerzung Ã¤ndern statt "f", "female" und statt "m" "male" verwenden
+#Abkuerzung ändern statt "f", "female" und statt "m" "male" verwenden
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "f"] <- "female"
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "m"] <- "male"
 
@@ -129,4 +129,3 @@ names(stratified_wide)[names(stratified_wide)== "AngabeGeschlecht"] <- "gender"
 #Alterspyramid kozipieren
 g <- ggplot(stratified_wide,aes(x=Count,y=ageG,fill=gender))
 g + geom_bar(stat="identity")
-

@@ -2,14 +2,59 @@ library(fhircrackr)
 library(tidyverse)
 library(ggplot2)
 
-search_request <- paste0(
-  'https://mii-agiop-cord.life.uni-leipzig.de/fhir/',
-  'Condition?',
-  'code=E70.0,E70.1,E84.0,E84.1,E84.8,E84.80,E84.87,E84.88,E84.9',
-  '&_include=Condition:subject'
-)
+# search_request <- paste0(
+#   'https://mii-agiop-cord.life.uni-leipzig.de/fhir/',
+#   'Condition?',
+#   'code=E70.0,E70.1,E84.0,E84.1,E84.8,E84.80,E84.87,E84.88,E84.9',
+#   '&_include=Condition:subject'
+# )
+# 
+# define design
+loaded_bundles <- fhir_load("./fhir/")
 
-# define design 
+x <- read_xml("<Bundle>
+  <Patient>
+  <id value='id1'/>
+    <address>
+    <use value='home'/>
+      <city value='Amsterdam'/>
+        <type value='physical'/>
+          <country value='Netherlands'/>
+            </address>
+            <name>
+            <given value='Marie'/>
+              </name>
+              </Patient>
+              4 example_bundles1
+            <Patient>
+              <id value='id3'/>
+                <address>
+                <use value='home'/>
+                  <city value='Berlin'/>
+                    </address>
+                    <address>
+                    <type value='postal'/>
+                      <country value='France'/>
+                        </address>
+                        <address>
+                        <use value='work'/>
+                          <city value='London'/>
+                            <type value='postal'/>
+                              <country value='England'/>
+                                </address>
+                                <name>
+                                <given value='Frank'/>
+                                  </name>
+                                  <name>
+                                  <given value='Max'/>
+                                    </name>
+                                    </Patient>
+                                    </Bundle>")
+fhir_bundle_xml(bundle = xml2::xml_unserialize(patient_bundles[[1]]))
+
+fhir_unserialize(bundles = loaded_bundles)#example_bundles1)
+
+
 design <- list(
   Conditions = list(
     resource = "//Condition",
@@ -46,17 +91,26 @@ design <- list(
       brackets = c("[", "]"),
       rm_empty_cols = FALSE
     )
-  ) 
+  )
 )
-
-# download fhir bundles TODO will not work
+# 
+# # download fhir bundles
 # bundles <- fhir_search(request = search_request, max_bundles = 50,verbose =2,log_errors = 2)
 
-# process json fhir bundles
-bundles <- # TODO load "cord_results.xml"
+library("rjson")
+
+library("xml2")
+x <- read_xml("./fhir_xml_results.xml")
+x
+#json_file <- "./fhir_xml_results.xml"
+#json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+#mylist = RJSONIO::fromJSON("./POLAR_Testdaten_UKB.json") 
+#myxml = xml2::as_xml_document(mylist)
+bundles <- x#mylist
+
 
 # crack fhir bundles
-dfs <- fhir_crack(bundles, design)
+dfs <- fhir_crack(loaded_bundles, design)
 
 # save raw patients dataframe
 patients_raw <- dfs$Patients
