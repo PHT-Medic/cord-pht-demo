@@ -102,12 +102,12 @@ library("rjson")
 library("xml2")
 x <- read_xml("./fhir_xml_results.xml")
 x
-
 #json_file <- "./fhir_xml_results.xml"
 #json_data <- fromJSON(paste(readLines(json_file), collapse=""))
 #mylist = RJSONIO::fromJSON("./POLAR_Testdaten_UKB.json") 
 #myxml = xml2::as_xml_document(mylist)
 bundles <- x#mylist
+
 
 # crack fhir bundles
 dfs <- fhir_crack(loaded_bundles, design)
