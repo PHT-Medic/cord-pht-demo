@@ -9,7 +9,7 @@
 ]
 },
 "data": {
-"output_format": "raw",
+"output_format": "json",
 "filename": "cord_results.json"
 }
 }

@@ -22,4 +22,5 @@ docker build -f Dockerfile_r . -t harbor-pht.tada5hi.net/cord_demo:latest
 docker run -v PATH_TO_REPO/R:/opt/train_data/:rw harbor-pht.tada5hi.net/cord_demo:latest
 ````
 PATH_TO_REPO is the path to the current repository.
-The corresponding input data for demo train 1 and 2 are provided.
+The corresponding input data for demo train 1, 2 and 3 are provided.
+The local execution with the R demo trains will throw currently an error by saving the results.

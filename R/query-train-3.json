@@ -4,7 +4,7 @@
     "parameters": [
       {
         "variable": "gender",
-        "condition": "male"
+        "condition": "female"
       },
       {
         "variable": "birthdate",
