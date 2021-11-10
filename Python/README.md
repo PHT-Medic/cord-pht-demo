@@ -2,6 +2,8 @@
 This repository contains the minimal requirements of an entrypoint.py to execute FHIR queries
 and write demo analysis code in Python.
 
+If you want to submit the code using our demo live page, we suggest cloning this repository first.
+You can either execute the train locally for development or within the UI.
 
 ## FHIR-queries
 Synthethic data was uploaded to IBM, Blaze and HAPI FHIR Servers. These types are currently supported by our Train-Library.
@@ -25,7 +27,7 @@ If you want e.g. query only female subjects, a born after 1960 use this query fi
     ]
   },
   "data": {
-    "output_format": "raw",
+    "output_format": "json",
     "filename": "query_results.json"
   }
 }
@@ -43,14 +45,15 @@ The algorithm ``entrypoint.py`` requests over the train library the FHIR data at
 specified in this file. The minimal example is giving the value counts of a certain column. If you want to query and analze
 different resources, adapt the `parse_resources()` function.
 
-### PyCharm IDE docker execution
-You can simply specify the Interpreter in PyCharm based on the docker image. Therefore, add the interpreter with a public available
-master image (e.g. ``harbor-pht.tada5hi.net/master/python/slim:latest``). If you run the train such, set the variable `DOCKER_IDE=True`.
-Please specify as container settings `-v <local_path>/station-data:/opt/pht_results` to the run parameters.
-
-### Execution as dockerfile
+### Execution with a dockerfile
 If you want to execute the train as a docker container, please build your train testing the code:
+
+If you want to run demo-train-1 or 2 locally, just change filename in the dockerfile. Change before in the corresponding
+entrypoint file the results_path (train_data dir if local execution)
+Afterwards you can create and execute the train locally using this command:
+
 ````shell
 docker build -f Dockerfile . -t harbor-pht.tada5hi.net/cord_demo:latest
-docker run --env-file ./.env  -v <path>/station-data:/opt/train_data/:rw harbor-pht.tada5hi.net/cord_demo:latest
+docker run -v PATH_TO_REPO/Python:/opt/train_data/:rw harbor-pht.tada5hi.net/cord_demo:latest
 ````
+PATH_TO_REPO is the path to the current repository.

@@ -2,18 +2,11 @@ import os
 import json
 import pandas as pd
 import pathlib
-import pickle
 from dotenv import load_dotenv, find_dotenv
-from train_lib.fhir import PHTFhirClient
-
 
 DATA_PATH = os.getenv("TRAIN_DATA_PATH")
-
-# for trains submitted via UI or build with dockerfile - docker_ide = False
-QUERY_FILE = "/opt/pht_train/cord_query.json"
 FHIR_PATH = "/opt/train_data/cord_results.json"
-MODEL_PATH = '/opt/pht_results/model.pkl'
-RESULT_PATH = '/opt/pht_results/results.pkl'
+RESULT_PATH = '/opt/pht_results/results.txt'
 
 
 def load_if_exists(model_path: str):
@@ -25,8 +18,8 @@ def load_if_exists(model_path: str):
     p = pathlib.Path(model_path)
     if pathlib.Path.is_file(p):
         print("Loading previous results")
-        with open(p, "rb") as model_file:
-            model = pickle.load(model_file)
+        with open(p, "r") as model_file:
+            model = json.load(model_file)
         return model
     else:
         return None
@@ -39,7 +32,7 @@ def save_results(results, result_path):
     :param result_path:  Path of results file
     :return: store results as pickle file
     """
-    dirPath = '/opt/pht_results'
+    dirPath = '/opt/train_data'
     try:
         # Create target Directory
         os.mkdir(dirPath)
@@ -47,8 +40,9 @@ def save_results(results, result_path):
     except FileExistsError:
         print("Directory ", dirPath,  " already exists (done by TB)")
     p = pathlib.Path(result_path)
-    with open(p, 'wb') as results_file:
-        return pickle.dump(results, results_file)
+    with open(p, 'w') as results_file:
+        json.dump(results, results_file)
+    print("Saved files")
 
 
 def parse_fhir_response() -> pd.DataFrame:
@@ -59,7 +53,7 @@ def parse_fhir_response() -> pd.DataFrame:
     with open(FHIR_PATH, "r") as f:
         results = json.load(f)
     parsed_resources = []
-    for patient in results:
+    for patient in results["entry"]:
         resource = patient["resource"]
         parsed_resources.append(parse_resource(resource))
 
@@ -94,9 +88,6 @@ def occurence_data(pat_df, column):
 
     return pat_df[column].value_counts()
 
-# TODO extend with own custom functions here
-
-
 if __name__ == '__main__':
     """
     Main analysis function of the train - the CORD minimal demo, requires only result files and no models
@@ -118,7 +109,7 @@ if __name__ == '__main__':
     # demo function to count occurence of specified variables
     occ = occurence_data(pat_df, 'gender')
 
-    results['analysis']['analysis_exec_' + str(len(results['analysis']) + 1)] = occ
+    results['analysis']['analysis_exec_' + str(len(results['analysis']) + 1)] = str(occ)
 
     # print updated results
     print("Updated results: {}".format(results))

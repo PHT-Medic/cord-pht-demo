@@ -1,4 +1,4 @@
 FROM harbor-pht.tada5hi.net/master/python/slim:latest
-COPY ["entrypoint.py", "cord_query.json", "/opt/pht_train/"]
-CMD ["python","/opt/pht_train/entrypoint.py"]
+COPY ["demo-train-2.py", "cord_query.json", "/opt/pht_train/"]
+CMD ["python","/opt/pht_train/demo-train-2.py"]
 

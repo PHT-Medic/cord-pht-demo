@@ -13,7 +13,7 @@
     ]
   },
   "data": {
-    "output_format": "raw",
-    "filename": "query_results.json"
+    "output_format": "json",
+    "filename": "cord_results.json"
   }
 }
