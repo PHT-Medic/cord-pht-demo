@@ -7,7 +7,7 @@ from dotenv import load_dotenv, find_dotenv
 DATA_PATH = os.getenv("TRAIN_DATA_PATH")
 FHIR_PATH = "/opt/train_data/cord_results.json"
 RESULT_PATH = '/opt/pht_results/results.txt'
-
+# RESULT_PATH = '/opt/train_data/results.txt' uncomment to run local
 
 def load_if_exists(model_path: str):
     """

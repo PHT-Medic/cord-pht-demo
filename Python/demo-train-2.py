@@ -2,11 +2,9 @@ import os
 import json
 import pandas as pd
 import pathlib
-import pickle
 from dotenv import load_dotenv, find_dotenv
 
 from train_lib.security.HomomorphicAddition import secure_addition
-from train_lib.security.KeyManager import KeyManager
 
 
 DATA_PATH = os.getenv("TRAIN_DATA_PATH")
@@ -72,7 +70,6 @@ def parse_resource(resource):
     :param resource:
     :return: dictionary of parsed resource
     """
-    # TODO change here to specify required resources
     sequence_dict = {
         "givenName": resource['name'][0]['given'],
         "familyName": resource['name'][0]['family'],
