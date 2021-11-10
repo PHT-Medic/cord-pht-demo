@@ -1,0 +1,26 @@
+{
+  "query": {
+    "resource": "Patient",
+    "parameters": [
+      {
+        "variable": "gender",
+        "condition": "male"
+      },
+      {
+        "variable": "birthdate",
+        "condition": "gt1980-08-12"
+      }
+    ],
+    "has": [
+      {
+        "resource": "Condition",
+        "property": "code",
+        "params": ["E70.0", "I20.0"]
+      }
+    ]
+  },
+  "data": {
+    "output_format": "xml",
+    "filename": "patients.xml"
+  }
+}

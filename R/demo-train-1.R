@@ -3,23 +3,24 @@
 ##############################################################################################################################
 library(tidyverse)
 library(eeptools) # um Alter zu berechnen
-library(ggplot2)# für muster age pyramid
+library(ggplot2)# fï¿½r muster age pyramid
 
 # empty global enviroment
 rm(list = ls())
 
 options(warn=-1)# warnung ausblenden
 #############################################################################################################
-# Fügen Sie die Eingabedaten zu Ihrem aktuellen Arbeitsverzeichnis hinzu und geben Sie den Pfad an
+# Fï¿½gen Sie die Eingabedaten zu Ihrem aktuellen Arbeitsverzeichnis hinzu und geben Sie den Pfad an
 ###########################################################################################################################################
 #Input von andere Team _Condition_code=E84.0,E84.1,E84.80,E84.87,E84.88,E84.9,O80_2021-03-03_15-25-58
 #data <- read.csv("r/projectathon/filename.csv")
 ###############################################################################################################
-data_folder <- "./opt/pht_data/"
+data_folder <- "./opt/train_data/"
 result_folder <- "./opt/pht_results/"
-print(paste(data_folder, "A2-1.csv", sep = ""))
+# result_folder <- "./opt/train_data/" if local execution
+print(paste(data_folder, "cord_input.csv", sep = ""))
 
-data <- read.csv(paste(data_folder ,"A2-1.csv", sep = ""))# aus projektbereich ordner
+data <- read.csv(paste(data_folder ,"cord_input.csv", sep = ""))# aus projektbereich ordner
 
 
 # Eleminiere doppelte Patienten
@@ -101,7 +102,7 @@ stratified_female <- (data = stratified %>% subset(AngabeGeschlecht=="f"))
 stratified_male <- (data = stratified %>% subset(AngabeGeschlecht=="m")) %>% transform(Anzahl = (data = stratified %>% subset(AngabeGeschlecht=="m"))$Anzahl * -1 )
 stratified_wide <- rbind(stratified_female,stratified_male)
 
-#Abkuerzung ändern statt "f", "female" und statt "m" "male" verwenden
+#Abkuerzung ï¿½ndern statt "f", "female" und statt "m" "male" verwenden
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "f"] <- "female"
 stratified_wide$AngabeGeschlecht [stratified_wide$AngabeGeschlecht == "m"] <- "male"
 

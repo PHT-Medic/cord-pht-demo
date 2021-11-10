@@ -36,6 +36,7 @@ data <- dfs$Patients
 
 ##Data folders#############################################################################################################
 result_folder <- "./opt/pht_results/"
+# result_folder <- "./opt/train_data/" if local execution
 
 # Berechne Alter auf der grund von Geburtsdatum
 data$AngabeAlter <- floor(age_calc(as.Date(data$birthdate), unit="years"))
@@ -54,7 +55,7 @@ output_pht_df <- data.frame(
 output_pht_df[is.na(output_pht_df)]<-0
 
 #Check if there are previous results -> if yes add up
-if (file.exists(paste(result_folder,"result_mean.csv", sep = ""))) {
+if (file.exists(paste(result_folder, "result_mean.csv", sep = ""))) {
   
   previous_mean_df <- read.csv2(paste0(result_folder,"result_mean.csv"))
   
