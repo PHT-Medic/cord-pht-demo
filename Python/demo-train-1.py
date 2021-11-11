@@ -32,7 +32,7 @@ def save_results(results, result_path):
     :param result_path:  Path of results file
     :return: store results as pickle file
     """
-    dirPath = '/opt/train_data'
+    dirPath = '/opt/pht_results'
     try:
         # Create target Directory
         os.mkdir(dirPath)
@@ -40,7 +40,7 @@ def save_results(results, result_path):
     except FileExistsError:
         print("Directory ", dirPath,  " already exists (done by TB)")
     p = pathlib.Path(result_path)
-    with open(p, 'w') as results_file:
+    with open(p, 'w+') as results_file:
         json.dump(results, results_file)
     print("Saved files")
 
