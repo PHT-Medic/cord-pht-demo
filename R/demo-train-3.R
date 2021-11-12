@@ -13,7 +13,7 @@ rm(list = ls())
 options(warn=-1)
 
 # load Data from imported FHIR
-loaded_bundles <- fhir_load("./opt/train_data/")
+loaded_bundles <- fhir_load("/opt/train_data/")
 design <- list(
   Condition = list(
     resource = "//Condition",

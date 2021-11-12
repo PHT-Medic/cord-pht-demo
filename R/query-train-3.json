@@ -1,23 +1,6 @@
 {
   "query": {
-    "resource": "Patient",
-    "parameters": [
-      {
-        "variable": "gender",
-        "condition": "female"
-      },
-      {
-        "variable": "birthdate",
-        "condition": "gt1960-08-12"
-      }
-    ],
-    "has": [
-      {
-        "resource": "Condition",
-        "property": "code",
-        "params": ["E70.0", "I20.0"]
-      }
-    ]
+    "resource": "Condition"
   },
   "data": {
     "output_format": "xml",
