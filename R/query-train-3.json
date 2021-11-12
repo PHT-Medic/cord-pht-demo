@@ -4,6 +4,6 @@
   },
   "data": {
     "output_format": "xml",
-    "filename": "patients.xml"
+    "filename": "conditions.xml"
   }
 }
