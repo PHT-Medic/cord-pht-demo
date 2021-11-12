@@ -8,7 +8,7 @@
       },
       {
         "variable": "birthdate",
-        "condition": "gt1980-08-12"
+        "condition": "gt1960-08-12"
       }
     ],
     "has": [
