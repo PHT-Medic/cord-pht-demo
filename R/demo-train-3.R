@@ -42,7 +42,7 @@ ggplot(result, aes(x=icd_10, y=Anzahl)) +
   geom_bar(stat = "identity")
 
 #Data folder for results
-result_folder <- "./opt/pht_results/"
+result_folder <- "/opt/pht_results/"
 
 # save image to file
 ggsave(paste0(result_folder,"result_graph_conditions.png"))
